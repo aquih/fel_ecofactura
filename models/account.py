@@ -27,6 +27,7 @@ class AccountInvoice(models.Model):
     resultado_xml_fel = fields.Binary('Resultado xml FEL', copy=False)
     resultado_xml_fel_name = fields.Char('Resultado doc xml FEL', default='resultado_xml_fel.xml', size=32)
 
+    @api.multi
     def invoice_validate(self):
         for factura in self:
             if factura.journal_id.generar_fel and not factura.firma_fel:
@@ -59,6 +60,7 @@ class AccountInvoice(models.Model):
                 TrnEFACECliDir = etree.SubElement(stdTWS, "TrnEFACECliDir")
                 TrnEFACECliDir.text = factura.partner_id.street or ''
                 TrnObs = etree.SubElement(stdTWS, "TrnObs")
+                TrnObs.text = factura.comment
                 TrnEMail = etree.SubElement(stdTWS, "TrnEmail")
                 if factura.partner_id.email:
                     TrnEMail.text = factura.partner_id.email
@@ -141,11 +143,25 @@ class AccountInvoice(models.Model):
                     TrnAbonoFecVen.text = str(factura.date_due)
                     TrnAbonoMonto = etree.SubElement(stdTWSCamIt, "TrnAbonoMonto")
                     TrnAbonoMonto.text = str(factura.amount_total)
+                    
+                if factura.journal_id.tipo_documento_fel in ["NCRE", "NDEB"]:
+                    stdTWSCam = etree.SubElement(stdTWS, "stdTWSNota")
+                    stdTWSCamIt = etree.SubElement(stdTWSCam, "stdTWS.stdTWSNota.stdTWSNotaIt")
+                    TDFEPRegimenAntiguo = etree.SubElement(stdTWSCamIt, "TDFEPRegimenAntiguo")
+                    TDFEPRegimenAntiguo.text = "0"
+                    TDFEPAutorizacion = etree.SubElement(stdTWSCamIt, "TDFEPAutorizacion")
+                    TDFEPAutorizacion.text = factura.factura_original_id.firma_fel if factura.factura_original_id else ""
+                    TDFEPSerie = etree.SubElement(stdTWSCamIt, "TDFEPSerie")
+                    TDFEPSerie.text = factura.factura_original_id.serie_fel if factura.factura_original_id else ""
+                    TDFEPNumero = etree.SubElement(stdTWSCamIt, "TDFEPNumero")
+                    TDFEPNumero.text = factura.factura_original_id.numero_fel if factura.factura_original_id else ""
+                    TDFEPNumero = etree.SubElement(stdTWSCamIt, "TDFEPFecEmision")
+                    TDFEPNumero.text = factura.factura_original_id.date_invoice if factura.factura_original_id else ""
 
                 xmls = etree.tostring(stdTWS, xml_declaration=True, encoding="UTF-8")
                 logging.warn(xmls.decode('utf8'))
 
-                wsdl = "http://pruebas.ecofactura.com.gt:8080/fel/adocumento?wsdl"
+                wsdl = "https://www.facturaenlineagt.com/adocumento?wsdl"
                 if factura.company_id.pruebas_fel:
                     wsdl = "http://pruebas.ecofactura.com.gt:8080/fel/adocumento?wsdl"
                 client = zeep.Client(wsdl=wsdl)
