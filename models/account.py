@@ -58,7 +58,7 @@ class AccountInvoice(models.Model):
                 TrnEFACECliNom = etree.SubElement(stdTWS, "TrnEFACECliNom")
                 TrnEFACECliNom.text = factura.partner_id.name
                 TrnEFACECliDir = etree.SubElement(stdTWS, "TrnEFACECliDir")
-                TrnEFACECliDir.text = factura.partner_id.street or ''
+                TrnEFACECliDir.text = factura.partner_id.street or ""
                 TrnObs = etree.SubElement(stdTWS, "TrnObs")
                 TrnObs.text = factura.comment or ""
                 TrnEMail = etree.SubElement(stdTWS, "TrnEmail")
