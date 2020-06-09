@@ -63,6 +63,14 @@
                                     <field name="clave_fel"/>
                                     <field name="pruebas_fel"/>
                                 </group>
+                                <group>
+                                    <field name="trncampad01_fel"/>
+                                    <field name="trncampad02_fel"/>
+                                    <field name="trncampad03_fel"/>
+                                    <field name="trncampad04_fel"/>
+                                    <field name="trncampad05_fel"/>
+                                    <field name="trncampad06_fel"/>
+                                </group>
                             </group>
                         </page>
                     </notebook>

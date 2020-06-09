@@ -60,16 +60,22 @@ class AccountInvoice(models.Model):
                 TrnEFACECliDir = etree.SubElement(stdTWS, "TrnEFACECliDir")
                 TrnEFACECliDir.text = factura.partner_id.street or ''
                 TrnObs = etree.SubElement(stdTWS, "TrnObs")
-                TrnObs.text = factura.comment
+                TrnObs.text = factura.comment or ""
                 TrnEMail = etree.SubElement(stdTWS, "TrnEmail")
                 if factura.partner_id.email:
                     TrnEMail.text = factura.partner_id.email
                 TrnCampAd01 = etree.SubElement(stdTWS, "TrnCampAd01")
+                TrnCampAd01.text = eval(factura.company_id.trncampad01_fel) if factura.company_id.trncampad01_fel else ""
                 TrnCampAd02 = etree.SubElement(stdTWS, "TrnCampAd02")
+                TrnCampAd02.text = eval(factura.company_id.trncampad02_fel) if factura.company_id.trncampad02_fel else ""
                 TrnCampAd03 = etree.SubElement(stdTWS, "TrnCampAd03")
+                TrnCampAd03.text = eval(factura.company_id.trncampad03_fel) if factura.company_id.trncampad03_fel else ""
                 TrnCampAd04 = etree.SubElement(stdTWS, "TrnCampAd04")
+                TrnCampAd04.text = eval(factura.company_id.trncampad04_fel) if factura.company_id.trncampad04_fel else ""
                 TrnCampAd05 = etree.SubElement(stdTWS, "TrnCampAd05")
+                TrnCampAd05.text = eval(factura.company_id.trncampad05_fel) if factura.company_id.trncampad05_fel else ""
                 TrnCampAd06 = etree.SubElement(stdTWS, "TrnCampAd06")
+                TrnCampAd06.text = eval(factura.company_id.trncampad06_fel) if factura.company_id.trncampad06_fel else ""
                 TrnCampAd07 = etree.SubElement(stdTWS, "TrnCampAd07")
                 TrnCampAd08 = etree.SubElement(stdTWS, "TrnCampAd08")
                 TrnCampAd09 = etree.SubElement(stdTWS, "TrnCampAd09")
@@ -166,7 +172,6 @@ class AccountInvoice(models.Model):
                     wsdl = "http://pruebas.ecofactura.com.gt:8080/fel/adocumento?wsdl"
                 client = zeep.Client(wsdl=wsdl)
 
-                logging.warn(factura.company_id.vat)
                 resultado = client.service.Execute(factura.company_id.vat, factura.company_id.usuario_fel, factura.company_id.clave_fel, factura.company_id.vat, xmls)
                 logging.warn(resultado)
                 resultadoBytes = bytes(bytearray(resultado, encoding='utf-8'))
@@ -184,6 +189,37 @@ class AccountInvoice(models.Model):
                     raise Warning(resultado)
 
         return super(AccountInvoice, self).invoice_validate()
+        
+    @api.multi
+    def action_cancel(self):
+        cancel_resultado = super(AccountInvoice, self).action_cancel()
+        if cancel_resultado:
+            
+            for factura in self:
+                if factura.journal_id.generar_fel and factura.firma_fel:
+                    
+                    wsdl = "https://www.facturaenlineagt.com/aanulacion?wsdl"
+                    if factura.company_id.pruebas_fel:
+                        wsdl = "http://pruebas.ecofactura.com.gt:8080/fel/aanulacion?wsdl"
+                    client = zeep.Client(wsdl=wsdl)
+                    
+                    resultado = client.service.Execute(factura.company_id.vat, factura.company_id.usuario_fel, factura.company_id.clave_fel, factura.company_id.vat, factura.firma_fel, factura.comment)
+                    logging.warn(resultado)
+                    resultadoBytes = bytes(bytearray(resultado, encoding='utf-8'))
+                    resultadoXML = etree.XML(resultadoBytes)
+                    
+                    if not resultadoXML.xpath("/DTE"):
+                        raise Warning(resultado)
+                        
+        return cancel_resultado
+                        
+    @api.multi
+    def action_cancel_draft(self):
+        for factura in self:
+            if factura.journal_id.generar_fel and factura.firma_fel:
+                raise Warning("La factura ya fue enviada, por lo que ya no puede ser modificada")
+            else:
+                return super(AccountInvoice, self).action_cancel_draft()
 
 class AccountJournal(models.Model):
     _inherit = "account.journal"
@@ -198,3 +234,9 @@ class ResCompany(models.Model):
     usuario_fel = fields.Char('Usuario FEL')
     clave_fel = fields.Char('Clave FEL')
     pruebas_fel = fields.Boolean('Pruebas FEL')
+    trncampad01_fel = fields.Char(string="TrnCampAd01 FEL")
+    trncampad02_fel = fields.Char(string="TrnCampAd02 FEL")
+    trncampad03_fel = fields.Char(string="TrnCampAd03 FEL")
+    trncampad04_fel = fields.Char(string="TrnCampAd04 FEL")
+    trncampad05_fel = fields.Char(string="TrnCampAd05 FEL")
+    trncampad06_fel = fields.Char(string="TrnCampAd06 FEL")
