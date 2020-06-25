@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
-from openerp import models, fields, api, _
-from openerp.exceptions import Warning
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError, ValidationError
 
 from datetime import datetime
 from lxml import etree
@@ -104,7 +104,7 @@ class AccountInvoice(models.Model):
                 stdTWSD = etree.SubElement(stdTWS, "stdTWSD")
 
                 num = 1
-                for linea in factura.invoice_line:
+                for linea in factura.invoice_line_ids:
                     stdTWSDIt = etree.SubElement(stdTWSD, "stdTWS.stdTWSCIt.stdTWSDIt")
 
                     TrnLiNum = etree.SubElement(stdTWSDIt, "TrnLiNum")
@@ -214,7 +214,7 @@ class AccountInvoice(models.Model):
         return cancel_resultado
                         
     @api.multi
-    def action_cancel_draft(self):
+    def action_invoice_draft(self):
         for factura in self:
             if factura.journal_id.generar_fel and factura.firma_fel:
                 raise Warning("La factura ya fue enviada, por lo que ya no puede ser modificada")
