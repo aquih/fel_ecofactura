@@ -219,7 +219,7 @@ class AccountInvoice(models.Model):
             if factura.journal_id.generar_fel and factura.firma_fel:
                 raise Warning("La factura ya fue enviada, por lo que ya no puede ser modificada")
             else:
-                return super(AccountInvoice, self).action_cancel_draft()
+                return super(AccountInvoice, self).action_invoice_draft()
 
 class AccountJournal(models.Model):
     _inherit = "account.journal"

@@ -1,12 +1,12 @@
 # -*- encoding: utf-8 -*-
 
 {
-    'name': 'GEFACE Ecofacturas',
+    'name': 'FEL Ecofacturas',
     'version': '1.0',
     'category': 'Custom',
     'description': """ Integración con factura electrónica de Ecofacturas """,
     'author': 'Rodrigo Fernandez',
-    'website': 'http://solucionesprisma.com/',
+    'website': 'http://aquih.com/',
     'depends': ['account'],
     'data': [
         'views/account_view.xml',
