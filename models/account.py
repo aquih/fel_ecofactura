@@ -22,10 +22,10 @@ class AccountInvoice(models.Model):
     incoterm_fel = fields.Char(string="Incoterm FEL")
     pdf_fel = fields.Binary('PDF FEL', copy=False)
     pdf_fel_name = fields.Char('Nombre PDF FEL', default='pdf_fel.pdf', size=32)
-    documento_xml_fel = fields.Binary('Documento xml FEL', copy=False)
-    documento_xml_fel_name = fields.Char('Nombre doc xml FEL', default='documento_xml_fel.xml', size=32)
-    resultado_xml_fel = fields.Binary('Resultado xml FEL', copy=False)
-    resultado_xml_fel_name = fields.Char('Resultado doc xml FEL', default='resultado_xml_fel.xml', size=32)
+    documento_xml_fel = fields.Binary('Documento XML FEL', copy=False)
+    documento_xml_fel_name = fields.Char('Nombre doc XML FEL', default='documento_xml_fel.xml', size=32)
+    resultado_xml_fel = fields.Binary('Resultado XML FEL', copy=False)
+    resultado_xml_fel_name = fields.Char('Resultado doc XML FEL', default='resultado_xml_fel.xml', size=32)
 
     @api.multi
     def invoice_validate(self):
