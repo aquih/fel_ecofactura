@@ -186,7 +186,7 @@ class AccountInvoice(models.Model):
                     factura.pdf_fel = resultadoXML.xpath("/DTE/Pdf")[0].text
                     factura.resultado_xml_fel = resultadoXML.xpath("/DTE/Xml")[0].text
                 else:
-                    raise Warning(resultado)
+                    raise ValidationError(resultado)
 
         return super(AccountInvoice, self).invoice_validate()
         
@@ -209,7 +209,7 @@ class AccountInvoice(models.Model):
                     resultadoXML = etree.XML(resultadoBytes)
                     
                     if not resultadoXML.xpath("/DTE"):
-                        raise Warning(resultado)
+                        raise ValidationError(resultado)
                         
         return cancel_resultado
                         
@@ -217,9 +217,9 @@ class AccountInvoice(models.Model):
     def action_invoice_draft(self):
         for factura in self:
             if factura.journal_id.generar_fel and factura.firma_fel:
-                raise Warning("La factura ya fue enviada, por lo que ya no puede ser modificada")
+                raise ValidationError("La factura ya fue enviada, por lo que ya no puede ser modificada")
             else:
-                return super(AccountInvoice, self).action_cancel_draft()
+                return super(AccountInvoice, self).action_invoice_draft()
 
 class AccountJournal(models.Model):
     _inherit = "account.journal"
