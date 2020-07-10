@@ -35,7 +35,7 @@
             <field name="inherit_id" ref="base.view_company_form"/>
             <field name="arch" type="xml">
                 <data>
-                    <field name="frases_fel" position="remove">
+                    <field name="frases_fel" position="replace">
                         <field name="usuario_fel"/>
                         <field name="clave_fel"/>
                         <field name="pruebas_fel"/>
@@ -46,7 +46,7 @@
                         <field name="trncampad05_fel"/>
                         <field name="trncampad06_fel"/>
                     </field>
-                    <field name="adenda_fel" position="remove">
+                    <field name="adenda_fel" position="replace">
                     </field>
                 </data>
             </field>
