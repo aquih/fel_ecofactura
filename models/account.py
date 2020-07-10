@@ -12,25 +12,15 @@ import zeep
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
-    firma_fel = fields.Char('Firma FEL', copy=False)
-    serie_fel = fields.Char('Serie FEL', copy=False)
-    numero_fel = fields.Char('Numero FEL', copy=False)
-    factura_original_id = fields.Many2one('account.invoice', string="Factura original FEL")
-    consignatario_fel = fields.Many2one('res.partner', string="Consignatario o Destinatario FEL")
-    comprador_fel = fields.Many2one('res.partner', string="Comprador FEL")
-    exportador_fel = fields.Many2one('res.partner', string="Exportador FEL")
-    incoterm_fel = fields.Char(string="Incoterm FEL")
     pdf_fel = fields.Binary('PDF FEL', copy=False)
     pdf_fel_name = fields.Char('Nombre PDF FEL', default='pdf_fel.pdf', size=32)
-    documento_xml_fel = fields.Binary('Documento XML FEL', copy=False)
-    documento_xml_fel_name = fields.Char('Nombre doc XML FEL', default='documento_xml_fel.xml', size=32)
-    resultado_xml_fel = fields.Binary('Resultado XML FEL', copy=False)
-    resultado_xml_fel_name = fields.Char('Resultado doc XML FEL', default='resultado_xml_fel.xml', size=32)
 
     @api.multi
     def invoice_validate(self):
         for factura in self:
-            if factura.journal_id.generar_fel and not factura.firma_fel:
+            if factura.journal_id.generar_fel:
+                if factura.firma_fel:
+                    raise UserError("La factura ya fue validada, por lo que no puede ser validada nuevamnte")
 
                 stdTWS = etree.Element("stdTWS", xmlns="FEL")
 
@@ -213,20 +203,10 @@ class AccountInvoice(models.Model):
                         
         return cancel_resultado
                         
-    @api.multi
-    def action_invoice_draft(self):
-        for factura in self:
-            if factura.journal_id.generar_fel and factura.firma_fel:
-                raise ValidationError("La factura ya fue enviada, por lo que ya no puede ser modificada")
-            else:
-                return super(AccountInvoice, self).action_invoice_draft()
-
 class AccountJournal(models.Model):
     _inherit = "account.journal"
 
     generar_fel = fields.Boolean('Generar FEL')
-    codigo_establecimiento_fel = fields.Char('Numero Establecimiento FEL')
-    tipo_documento_fel = fields.Selection([('FACT', 'FACT'), ('FCAM', 'FCAM'), ('FPEQ', 'FPEQ'), ('FCAP', 'FCAP'), ('FESP', 'FESP'), ('NABN', 'NABN'), ('RDON', 'RDON'), ('RECI', 'RECI'), ('NDEB', 'NDEB'), ('NCRE', 'NCRE')], 'Tipo de Documento FEL',)
 
 class ResCompany(models.Model):
     _inherit = "res.company"
