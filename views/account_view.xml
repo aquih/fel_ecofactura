@@ -5,7 +5,7 @@
         <record model="ir.ui.view" id="invoice_form_gface_ecofacturas">
             <field name="name">account.invoice.form.gface_ecofacturas</field>
             <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="inherit_id" ref="fel_gt.invoice_form_fel_gt"/>
             <field name="arch" type="xml">
                 <data>
                     <field name="resultado_xml_fel" position="after">
@@ -19,7 +19,7 @@
         <record model="ir.ui.view" id="journal_form_gface_ecofacturas">
             <field name="name">account.journal.form.gface_ecofacturas</field>
             <field name="model">account.journal</field>
-            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="inherit_id" ref="fel_gt.journal_form_fel_gt"/>
             <field name="arch" type="xml">
                 <data>
                     <field name="tipo_documento_fel" position="after">
@@ -32,7 +32,7 @@
         <record id="view_company_form_fel_ecofacturas" model="ir.ui.view">
             <field name="name">res.company.form.fel_infile</field>
             <field name="model">res.company</field>
-            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="inherit_id" ref="fel_gt.view_company_form_fel_gt"/>
             <field name="arch" type="xml">
                 <data>
                     <field name="frases_fel" position="replace">
