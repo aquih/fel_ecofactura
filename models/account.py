@@ -18,9 +18,10 @@ class AccountInvoice(models.Model):
     @api.multi
     def invoice_validate(self):
         for factura in self:
-            if factura.journal_id.generar_fel:
-                if factura.firma_fel:
-                    raise UserError("La factura ya fue validada, por lo que no puede ser validada nuevamnte")
+            if factura.journal_id.generar_fel and factura.requiere_certificacion():
+
+                if factura.error_pre_validacion():
+                    return
 
                 stdTWS = etree.Element("stdTWS", xmlns="FEL")
 
@@ -50,7 +51,7 @@ class AccountInvoice(models.Model):
                 TrnEFACECliDir = etree.SubElement(stdTWS, "TrnEFACECliDir")
                 TrnEFACECliDir.text = factura.partner_id.street or ""
                 TrnObs = etree.SubElement(stdTWS, "TrnObs")
-                TrnObs.text = factura.comment or ""
+                TrnObs.text = factura.motivo_fel or ""
                 TrnEMail = etree.SubElement(stdTWS, "TrnEmail")
                 if factura.partner_id.email:
                     TrnEMail.text = factura.partner_id.email
@@ -176,9 +177,13 @@ class AccountInvoice(models.Model):
                     factura.pdf_fel = resultadoXML.xpath("/DTE/Pdf")[0].text
                     factura.resultado_xml_fel = resultadoXML.xpath("/DTE/Xml")[0].text
                 else:
-                    raise ValidationError(resultado)
+                    factura.error_certificador(resultado)
+                    return
 
-        return super(AccountInvoice, self).invoice_validate()
+                return super(AccountInvoice, self).invoice_validate()
+
+            else:
+                return super(AccountInvoice, self).invoice_validate()
         
     @api.multi
     def action_cancel(self):
@@ -193,10 +198,12 @@ class AccountInvoice(models.Model):
                         wsdl = "http://pruebas.ecofactura.com.gt:8080/fel/aanulacion?wsdl"
                     client = zeep.Client(wsdl=wsdl)
                     
-                    resultado = client.service.Execute(factura.company_id.vat, factura.company_id.usuario_fel, factura.company_id.clave_fel, factura.company_id.vat, factura.firma_fel, factura.comment)
+                    resultado = client.service.Execute(factura.company_id.vat, factura.company_id.usuario_fel, factura.company_id.clave_fel, factura.company_id.vat, factura.firma_fel, factura.motivo_fel)
                     logging.warn(resultado)
                     resultadoBytes = bytes(bytearray(resultado, encoding='utf-8'))
                     resultadoXML = etree.XML(resultadoBytes)
+                    factura.pdf_fel = resultadoXML.xpath("/DTE/Pdf")[0].text
+                    logging.warn(resultado)
                     
                     if not resultadoXML.xpath("/DTE"):
                         raise ValidationError(resultado)
