@@ -2,9 +2,9 @@
 <openerp>
     <data>
 
-        <record model="ir.ui.view" id="invoice_form_gface_ecofacturas">
-            <field name="name">account.invoice.form.gface_ecofacturas</field>
-            <field name="model">account.invoice</field>
+        <record model="ir.ui.view" id="account_move_form_fel_ecofacturas">
+            <field name="name">account.move.form.fel_ecofacturas</field>
+            <field name="model">account.move</field>
             <field name="inherit_id" ref="fel_gt.invoice_form_fel_gt"/>
             <field name="arch" type="xml">
                 <data>
@@ -22,9 +22,7 @@
             <field name="inherit_id" ref="fel_gt.journal_form_fel_gt"/>
             <field name="arch" type="xml">
                 <data>
-                    <field name="tipo_documento_fel" position="after">
-                        <field name="generar_fel"/>
-                    </field>
+
                 </data>
             </field>
         </record>

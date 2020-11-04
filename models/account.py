@@ -9,16 +9,15 @@ import base64
 import logging
 import zeep
 
-class AccountInvoice(models.Model):
-    _inherit = "account.invoice"
+class AccountMove(models.Model):
+    _inherit = "account.move"
 
     pdf_fel = fields.Binary('PDF FEL', copy=False)
     pdf_fel_name = fields.Char('Nombre PDF FEL', default='pdf_fel.pdf', size=32)
 
-    @api.multi
-    def invoice_validate(self):
+    def post(self):
         for factura in self:
-            if factura.journal_id.generar_fel and factura.requiere_certificacion():
+            if factura.requiere_certificacion():
 
                 if factura.error_pre_validacion():
                     return
@@ -26,13 +25,13 @@ class AccountInvoice(models.Model):
                 stdTWS = etree.Element("stdTWS", xmlns="FEL")
 
                 TrnEstNum = etree.SubElement(stdTWS, "TrnEstNum")
-                TrnEstNum.text = factura.journal_id.codigo_establecimiento_fel
+                TrnEstNum.text = str(factura.journal_id.codigo_establecimiento)
                 TipTrnCod = etree.SubElement(stdTWS, "TipTrnCod")
                 TipTrnCod.text = factura.journal_id.tipo_documento_fel
                 TrnNum = etree.SubElement(stdTWS, "TrnNum")
                 TrnNum.text = str(factura.id)
                 TrnFec = etree.SubElement(stdTWS, "TrnFec")
-                TrnFec.text = str(factura.date_invoice)
+                TrnFec.text = factura.invoice_date.strftime('%Y-%m-%d')
                 MonCod = etree.SubElement(stdTWS, "MonCod")
                 MonCod.text = "GTQ"
                 TrnBenConNIT = etree.SubElement(stdTWS, "TrnBenConNIT")
@@ -180,40 +179,33 @@ class AccountInvoice(models.Model):
                     factura.error_certificador(resultado)
                     return
 
-                return super(AccountInvoice, self).invoice_validate()
+                return super(AccountMove,self).post()
 
             else:
-                return super(AccountInvoice, self).invoice_validate()
+                return super(AccountMove,self).post()
         
-    @api.multi
-    def action_cancel(self):
-        cancel_resultado = super(AccountInvoice, self).action_cancel()
-        if cancel_resultado:
-            
-            for factura in self:
-                if factura.journal_id.generar_fel and factura.firma_fel:
-                    
-                    wsdl = "https://www.facturaenlineagt.com/aanulacion?wsdl"
-                    if factura.company_id.pruebas_fel:
-                        wsdl = "http://pruebas.ecofactura.com.gt:8080/fel/aanulacion?wsdl"
-                    client = zeep.Client(wsdl=wsdl)
-                    
-                    resultado = client.service.Execute(factura.company_id.vat, factura.company_id.usuario_fel, factura.company_id.clave_fel, factura.company_id.vat, factura.firma_fel, factura.motivo_fel)
-                    logging.warn(resultado)
-                    resultadoBytes = bytes(bytearray(resultado, encoding='utf-8'))
-                    resultadoXML = etree.XML(resultadoBytes)
-                    factura.pdf_fel = resultadoXML.xpath("/DTE/Pdf")[0].text
-                    logging.warn(resultado)
-                    
-                    if not resultadoXML.xpath("/DTE"):
-                        raise ValidationError(resultado)
-                        
-        return cancel_resultado
-                        
+    def button_cancel(self):
+        result = super(AccountMove, self).button_cancel()
+        for factura in self:
+            if factura.requiere_certificacion() and factura.firma_fel:
+                
+                wsdl = "https://www.facturaenlineagt.com/aanulacion?wsdl"
+                if factura.company_id.pruebas_fel:
+                    wsdl = "http://pruebas.ecofactura.com.gt:8080/fel/aanulacion?wsdl"
+                client = zeep.Client(wsdl=wsdl)
+                
+                resultado = client.service.Execute(factura.company_id.vat, factura.company_id.usuario_fel, factura.company_id.clave_fel, factura.company_id.vat, factura.firma_fel, factura.motivo_fel)
+                logging.warn(resultado)
+                resultadoBytes = bytes(bytearray(resultado, encoding='utf-8'))
+                resultadoXML = etree.XML(resultadoBytes)
+                factura.pdf_fel = resultadoXML.xpath("/DTE/Pdf")[0].text
+                logging.warn(resultado)
+                
+                if not resultadoXML.xpath("/DTE"):
+                    raise ValidationError(resultado)
+                                                
 class AccountJournal(models.Model):
     _inherit = "account.journal"
-
-    generar_fel = fields.Boolean('Generar FEL')
 
 class ResCompany(models.Model):
     _inherit = "res.company"
