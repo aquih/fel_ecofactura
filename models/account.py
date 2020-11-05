@@ -175,6 +175,7 @@ class AccountMove(models.Model):
                     factura.documento_xml_fel = base64.b64encode(b" "+xmls)
                     factura.pdf_fel = resultadoXML.xpath("/DTE/Pdf")[0].text
                     factura.resultado_xml_fel = resultadoXML.xpath("/DTE/Xml")[0].text
+                    factura.certificador_fel = "ecofactura"
                 else:
                     factura.error_certificador(resultado)
                     return
