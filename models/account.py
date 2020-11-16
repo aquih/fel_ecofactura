@@ -152,7 +152,7 @@ class AccountMove(models.Model):
                     TDFEPNumero = etree.SubElement(stdTWSCamIt, "TDFEPNumero")
                     TDFEPNumero.text = factura.factura_original_id.numero_fel if factura.factura_original_id else ""
                     TDFEPNumero = etree.SubElement(stdTWSCamIt, "TDFEPFecEmision")
-                    TDFEPNumero.text = str(factura.factura_original_id.date_invoice) if factura.factura_original_id else ""
+                    TDFEPNumero.text = str(factura.factura_original_id.invoice_date.strftime('%Y-%m-%d')) if factura.factura_original_id else ""
 
                 xmls = etree.tostring(stdTWS, xml_declaration=True, encoding="UTF-8")
                 logging.warn(xmls.decode('utf8'))
