@@ -110,11 +110,11 @@ class AccountMove(models.Model):
                     TrnCan = etree.SubElement(stdTWSDIt, "TrnCan")
                     TrnCan.text = str(linea.quantity)
                     TrnVUn = etree.SubElement(stdTWSDIt, "TrnVUn")
-                    TrnVUn.text = str(linea.price_unit)
+                    TrnVUn.text = '{:.6f}'.format(linea.price_unit)
                     TrnUniMed = etree.SubElement(stdTWSDIt, "TrnUniMed")
                     TrnUniMed.text = "UNIDAD"
                     TrnVDes = etree.SubElement(stdTWSDIt, "TrnVDes")
-                    TrnVDes.text = str(( linea.price_unit * linea.quantity ) *  ( linea.discount / 100 ) )
+                    TrnVDes.text = '{:.6f}'.format(( linea.price_unit * linea.quantity ) *  ( linea.discount / 100 ))
                     TrnArtBienSer = etree.SubElement(stdTWSDIt, "TrnArtBienSer")
                     if linea.product_id.type == 'product':
                         TrnArtBienSer.text = "B"
@@ -152,7 +152,7 @@ class AccountMove(models.Model):
                     TDFEPNumero = etree.SubElement(stdTWSCamIt, "TDFEPNumero")
                     TDFEPNumero.text = factura.factura_original_id.numero_fel if factura.factura_original_id else ""
                     TDFEPNumero = etree.SubElement(stdTWSCamIt, "TDFEPFecEmision")
-                    TDFEPNumero.text = str(factura.factura_original_id.date_invoice) if factura.factura_original_id else ""
+                    TDFEPNumero.text = str(factura.factura_original_id.invoice_date.strftime('%Y-%m-%d')) if factura.factura_original_id else ""
 
                 xmls = etree.tostring(stdTWS, xml_declaration=True, encoding="UTF-8")
                 logging.warn(xmls.decode('utf8'))
