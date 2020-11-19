@@ -170,11 +170,12 @@ class AccountInvoice(models.Model):
 
                 if resultadoXML.xpath("/DTE"):
                     dte = resultadoXML.xpath("/DTE")
+                    factura.name = dte[0].get("Serie")+"-"+dte[0].get("Numero")
                     factura.firma_fel = dte[0].get("NumeroAutorizacion")
                     factura.serie_fel = dte[0].get("Serie")
                     factura.numero_fel = dte[0].get("Numero")
-                    factura.documento_xml_fel = base64.b64encode(b" "+xmls)
                     factura.pdf_fel = resultadoXML.xpath("/DTE/Pdf")[0].text
+                    factura.documento_xml_fel = base64.b64encode(b" "+xmls)
                     factura.resultado_xml_fel = resultadoXML.xpath("/DTE/Xml")[0].text
                 else:
                     factura.error_certificador(resultado)
