@@ -21,6 +21,8 @@ class AccountMove(models.Model):
 
                 if factura.error_pre_validacion():
                     return
+                    
+                self.descuento_lineas()
 
                 stdTWS = etree.Element("stdTWS", xmlns="FEL")
 
@@ -95,6 +97,9 @@ class AccountMove(models.Model):
 
                 num = 1
                 for linea in factura.invoice_line_ids:
+                    if linea.price_total == 0:
+                        continue
+                
                     stdTWSDIt = etree.SubElement(stdTWSD, "stdTWS.stdTWSCIt.stdTWSDIt")
 
                     TrnLiNum = etree.SubElement(stdTWSDIt, "TrnLiNum")
