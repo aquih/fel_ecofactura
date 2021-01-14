@@ -24,6 +24,10 @@ class AccountMove(models.Model):
                     
                 self.descuento_lineas()
                 
+                tipo_documento_fel = factura.journal_id.tipo_documento_fel
+                if tipo_documento_fel in ['FACT', 'FACM'] and factura.type == 'out_refund':
+                    tipo_documento_fel = 'NCRE'
+                
                 nit_receptor = 'CF'
                 tipo_receptor = '1'
                 if factura.partner_id.vat:
@@ -37,7 +41,7 @@ class AccountMove(models.Model):
                 TrnEstNum = etree.SubElement(stdTWS, "TrnEstNum")
                 TrnEstNum.text = str(factura.journal_id.codigo_establecimiento)
                 TipTrnCod = etree.SubElement(stdTWS, "TipTrnCod")
-                TipTrnCod.text = factura.journal_id.tipo_documento_fel
+                TipTrnCod.text = tipo_documento_fel
                 TrnNum = etree.SubElement(stdTWS, "TrnNum")
                 TrnNum.text = str(factura.id)
                 TrnFec = etree.SubElement(stdTWS, "TrnFec")
@@ -145,7 +149,7 @@ class AccountMove(models.Model):
                     TrnDetCampAd04 = etree.SubElement(stdTWSDIt, "TrnDetCampAdi04")
                     TrnDetCampAd05 = etree.SubElement(stdTWSDIt, "TrnDetCampAdi05")
 
-                if factura.journal_id.tipo_documento_fel == "FCAM":
+                if tipo_documento_fel == "FCAM":
                     stdTWSCam = etree.SubElement(stdTWS, "stdTWSCam")
                     stdTWSCamIt = etree.SubElement(stdTWSCam, "stdTWS.stdTWSCam.stdTWSCamIt")
                     TrnAbonoNum = etree.SubElement(stdTWSCamIt, "TrnAbonoNum")
@@ -155,7 +159,7 @@ class AccountMove(models.Model):
                     TrnAbonoMonto = etree.SubElement(stdTWSCamIt, "TrnAbonoMonto")
                     TrnAbonoMonto.text = str(factura.amount_total)
                     
-                if factura.journal_id.tipo_documento_fel in ["NCRE", "NDEB"]:
+                if tipo_documento_fel in ["NCRE", "NDEB"]:
                     stdTWSCam = etree.SubElement(stdTWS, "stdTWSNota")
                     stdTWSCamIt = etree.SubElement(stdTWSCam, "stdTWS.stdTWSNota.stdTWSNotaIt")
                     TDFEPRegimenAntiguo = etree.SubElement(stdTWSCamIt, "TDFEPRegimenAntiguo")
