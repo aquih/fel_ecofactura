@@ -25,10 +25,12 @@ class AccountMove(models.Model):
                 self.descuento_lineas()
                 
                 nit_receptor = 'CF'
+                tipo_receptor = '1'
                 if factura.partner_id.vat:
                     nit_receptor = factura.partner_id.vat.replace('-','')
                 if tipo_documento_fel == "FESP" and factura.partner_id.cui:
                     nit_receptor = factura.partner_id.cui
+                    tipo_receptor = '2'
 
                 stdTWS = etree.Element("stdTWS", xmlns="FEL")
 
@@ -44,6 +46,8 @@ class AccountMove(models.Model):
                 MonCod.text = "GTQ"
                 TrnBenConNIT = etree.SubElement(stdTWS, "TrnBenConNIT")
                 TrnBenConNIT.text = nit_receptor
+                TrnBenConEspecial = etree.SubElement(stdTWS, "TrnBenConEspecial")
+                TrnBenConEspecial.text = tipo_receptor
                 TrnFec = etree.SubElement(stdTWS, "TrnExp")
                 TrnFec.text = "1" if factura.tipo_gasto == "importacion" else "0"
                 TrnFec = etree.SubElement(stdTWS, "TrnExento")
