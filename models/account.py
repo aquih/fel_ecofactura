@@ -23,6 +23,12 @@ class AccountMove(models.Model):
                     return
                     
                 self.descuento_lineas()
+                
+                nit_receptor = 'CF'
+                if factura.partner_id.vat:
+                    nit_receptor = factura.partner_id.vat.replace('-','')
+                if tipo_documento_fel == "FESP" and factura.partner_id.cui:
+                    nit_receptor = factura.partner_id.cui
 
                 stdTWS = etree.Element("stdTWS", xmlns="FEL")
 
@@ -37,7 +43,7 @@ class AccountMove(models.Model):
                 MonCod = etree.SubElement(stdTWS, "MonCod")
                 MonCod.text = "GTQ"
                 TrnBenConNIT = etree.SubElement(stdTWS, "TrnBenConNIT")
-                TrnBenConNIT.text = factura.partner_id.vat.replace('-', '') or ''
+                TrnBenConNIT.text = nit_receptor
                 TrnFec = etree.SubElement(stdTWS, "TrnExp")
                 TrnFec.text = "1" if factura.tipo_gasto == "importacion" else "0"
                 TrnFec = etree.SubElement(stdTWS, "TrnExento")
@@ -141,7 +147,7 @@ class AccountMove(models.Model):
                     TrnAbonoNum = etree.SubElement(stdTWSCamIt, "TrnAbonoNum")
                     TrnAbonoNum.text = "1"
                     TrnAbonoFecVen = etree.SubElement(stdTWSCamIt, "TrnAbonoFecVen")
-                    TrnAbonoFecVen.text = str(factura.date_due)
+                    TrnAbonoFecVen.text = str(factura.invoice_date_due)
                     TrnAbonoMonto = etree.SubElement(stdTWSCamIt, "TrnAbonoMonto")
                     TrnAbonoMonto.text = str(factura.amount_total)
                     
