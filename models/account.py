@@ -15,7 +15,15 @@ class AccountMove(models.Model):
     pdf_fel = fields.Binary('PDF FEL', copy=False)
     pdf_fel_name = fields.Char('Nombre PDF FEL', default='pdf_fel.pdf', size=32)
 
+    def _post(self, soft=True):
+        if self.certificar():
+            return super(AccountMove, self)._post(soft)
+
     def post(self):
+        if self.certificar():
+            return super(AccountMove, self).post()
+    
+    def certificar(self):
         for factura in self:
             if factura.requiere_certificacion():
 
@@ -24,8 +32,8 @@ class AccountMove(models.Model):
                     
                 self.descuento_lineas()
                 
-                tipo_documento_fel = factura.journal_id.tipo_documento_fel
-                if tipo_documento_fel in ['FACT', 'FACM'] and factura.type == 'out_refund':
+                tipo_interno_factua = factura.type if 'type' in factura.fields_get() else factura.move_type
+                if tipo_documento_fel in ['FACT', 'FACM'] and tipo_interno_factua == 'out_refund':
                     tipo_documento_fel = 'NCRE'
                 
                 nit_receptor = 'CF'
@@ -198,12 +206,12 @@ class AccountMove(models.Model):
                     factura.certificador_fel = "ecofactura"
                 else:
                     factura.error_certificador(resultado)
-                    return
+                    return False
 
-                return super(AccountMove,self).post()
+                return True
 
             else:
-                return super(AccountMove,self).post()
+                return True
         
     def button_cancel(self):
         result = super(AccountMove, self).button_cancel()
