@@ -35,6 +35,10 @@ class AccountMove(models.Model):
                 tipo_interno_factua = factura.type if 'type' in factura.fields_get() else factura.move_type
                 if tipo_documento_fel in ['FACT', 'FACM'] and tipo_interno_factua == 'out_refund':
                     tipo_documento_fel = 'NCRE'
+                    
+                moneda = "GTQ"
+                if factura.currency_id.id != factura.company_id.currency_id.id:
+                    moneda = "USD"
                 
                 nit_receptor = 'CF'
                 tipo_receptor = '1'
@@ -55,19 +59,19 @@ class AccountMove(models.Model):
                 TrnFec = etree.SubElement(stdTWS, "TrnFec")
                 TrnFec.text = factura.invoice_date.strftime('%Y-%m-%d')
                 MonCod = etree.SubElement(stdTWS, "MonCod")
-                MonCod.text = "GTQ"
+                MonCod.text = moneda
                 TrnBenConNIT = etree.SubElement(stdTWS, "TrnBenConNIT")
                 TrnBenConNIT.text = nit_receptor
                 TrnBenConEspecial = etree.SubElement(stdTWS, "TrnBenConEspecial")
                 TrnBenConEspecial.text = tipo_receptor
-                TrnFec = etree.SubElement(stdTWS, "TrnExp")
-                TrnFec.text = "1" if factura.tipo_gasto == "importacion" else "0"
-                TrnFec = etree.SubElement(stdTWS, "TrnExento")
-                TrnFec.text = "0"
-                TrnFec = etree.SubElement(stdTWS, "TrnFraseTipo")
-                TrnFec.text = "0"
-                TrnFec = etree.SubElement(stdTWS, "TrnEscCod")
-                TrnFec.text = "1" if factura.tipo_gasto == "importacion" else "0"
+                TrnExp = etree.SubElement(stdTWS, "TrnExp")
+                TrnExp.text = "1" if factura.tipo_gasto == "importacion" else "0"
+                TrnExento = etree.SubElement(stdTWS, "TrnExento")
+                TrnExento.text = "0"
+                TrnFraseTipo = etree.SubElement(stdTWS, "TrnFraseTipo")
+                TrnFraseTipo.text = "0"
+                TrnEscCod = etree.SubElement(stdTWS, "TrnEscCod")
+                TrnEscCod.text = "1" if factura.tipo_gasto == "importacion" else "0"
                 TrnEFACECliCod = etree.SubElement(stdTWS, "TrnEFACECliCod")
                 TrnEFACECliNom = etree.SubElement(stdTWS, "TrnEFACECliNom")
                 TrnEFACECliNom.text = factura.partner_id.name
