@@ -32,6 +32,7 @@ class AccountMove(models.Model):
                     
                 self.descuento_lineas()
                 
+                tipo_documento_fel = factura.journal_id.tipo_documento_fel
                 tipo_interno_factua = factura.type if 'type' in factura.fields_get() else factura.move_type
                 if tipo_documento_fel in ['FACT', 'FACM'] and tipo_interno_factua == 'out_refund':
                     tipo_documento_fel = 'NCRE'
