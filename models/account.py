@@ -48,6 +48,8 @@ class AccountMove(models.Model):
                 if tipo_documento_fel == "FESP" and factura.partner_id.cui:
                     nit_receptor = factura.partner_id.cui
                     tipo_receptor = '2'
+                    
+                fecha = factura.invoice_date.strftime('%Y-%m-%d') if factura.invoice_date else fields.Date.context_today(self).strftime('%Y-%m-%d')
 
                 stdTWS = etree.Element("stdTWS", xmlns="FEL")
 
@@ -58,7 +60,7 @@ class AccountMove(models.Model):
                 TrnNum = etree.SubElement(stdTWS, "TrnNum")
                 TrnNum.text = str(factura.id)
                 TrnFec = etree.SubElement(stdTWS, "TrnFec")
-                TrnFec.text = factura.invoice_date.strftime('%Y-%m-%d')
+                TrnFec.text = fecha
                 MonCod = etree.SubElement(stdTWS, "MonCod")
                 MonCod.text = moneda
                 TrnBenConNIT = etree.SubElement(stdTWS, "TrnBenConNIT")
