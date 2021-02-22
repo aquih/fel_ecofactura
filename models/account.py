@@ -203,7 +203,7 @@ class AccountMove(models.Model):
 
                 if resultadoXML.xpath("/DTE"):
                     dte = resultadoXML.xpath("/DTE")
-                    factura.name = dte[0].get("Serie")+"-"+dte[0].get("Numero")
+                    #factura.name = dte[0].get("Serie")+"-"+dte[0].get("Numero")
                     factura.firma_fel = dte[0].get("NumeroAutorizacion")
                     factura.serie_fel = dte[0].get("Serie")
                     factura.numero_fel = dte[0].get("Numero")
