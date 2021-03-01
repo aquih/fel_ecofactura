@@ -142,7 +142,7 @@ class AccountMove(models.Model):
                     TrnArtNom = etree.SubElement(stdTWSDIt, "TrnArtNom")
                     TrnArtNom.text = linea.name
                     TrnCan = etree.SubElement(stdTWSDIt, "TrnCan")
-                    TrnCan.text = str(linea.quantity)
+                    TrnCan.text = '{:.6f}'.format(linea.quantity)
                     TrnVUn = etree.SubElement(stdTWSDIt, "TrnVUn")
                     TrnVUn.text = '{:.6f}'.format(linea.price_unit)
                     TrnUniMed = etree.SubElement(stdTWSDIt, "TrnUniMed")
