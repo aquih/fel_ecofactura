@@ -25,6 +25,11 @@ class AccountInvoice(models.Model):
                     
                 self.descuento_lineas()
                 
+                tipo_documento_fel = factura.journal_id.tipo_documento_fel
+                tipo_interno_factura = factura.type if 'type' in factura.fields_get() else factura.move_type
+                if tipo_documento_fel in ['FACT', 'FACM'] and tipo_interno_factura == 'out_refund':
+                    tipo_documento_fel = 'NCRE'
+                
                 moneda = "GTQ"
                 if factura.currency_id.id != factura.company_id.currency_id.id:
                     moneda = "USD"
@@ -42,7 +47,7 @@ class AccountInvoice(models.Model):
                 TrnEstNum = etree.SubElement(stdTWS, "TrnEstNum")
                 TrnEstNum.text = str(factura.journal_id.codigo_establecimiento_fel)
                 TipTrnCod = etree.SubElement(stdTWS, "TipTrnCod")
-                TipTrnCod.text = factura.journal_id.tipo_documento_fel
+                TipTrnCod.text = tipo_documento_fel
                 TrnNum = etree.SubElement(stdTWS, "TrnNum")
                 TrnNum.text = str(factura.id)
                 TrnFec = etree.SubElement(stdTWS, "TrnFec")
