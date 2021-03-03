@@ -22,11 +22,25 @@ class AccountInvoice(models.Model):
 
                 if factura.error_pre_validacion():
                     return
+                    
+                self.descuento_lineas()
+                
+                moneda = "GTQ"
+                if factura.currency_id.id != factura.company_id.currency_id.id:
+                    moneda = "USD"
+                
+                nit_receptor = 'CF'
+                tipo_receptor = '1'
+                if factura.partner_id.vat:
+                    nit_receptor = factura.partner_id.vat.replace('-','')
+                if tipo_documento_fel == "FESP" and factura.partner_id.cui:
+                    nit_receptor = factura.partner_id.cui
+                    tipo_receptor = '2'
 
                 stdTWS = etree.Element("stdTWS", xmlns="FEL")
 
                 TrnEstNum = etree.SubElement(stdTWS, "TrnEstNum")
-                TrnEstNum.text = factura.journal_id.codigo_establecimiento_fel
+                TrnEstNum.text = str(factura.journal_id.codigo_establecimiento_fel)
                 TipTrnCod = etree.SubElement(stdTWS, "TipTrnCod")
                 TipTrnCod.text = factura.journal_id.tipo_documento_fel
                 TrnNum = etree.SubElement(stdTWS, "TrnNum")
@@ -34,17 +48,19 @@ class AccountInvoice(models.Model):
                 TrnFec = etree.SubElement(stdTWS, "TrnFec")
                 TrnFec.text = str(factura.date_invoice)
                 MonCod = etree.SubElement(stdTWS, "MonCod")
-                MonCod.text = "GTQ"
+                MonCod.text = moneda
                 TrnBenConNIT = etree.SubElement(stdTWS, "TrnBenConNIT")
-                TrnBenConNIT.text = factura.partner_id.vat.replace('-', '') or ''
-                TrnFec = etree.SubElement(stdTWS, "TrnExp")
-                TrnFec.text = "1" if factura.tipo_gasto == "importacion" else "0"
-                TrnFec = etree.SubElement(stdTWS, "TrnExento")
-                TrnFec.text = "0"
-                TrnFec = etree.SubElement(stdTWS, "TrnFraseTipo")
-                TrnFec.text = "0"
-                TrnFec = etree.SubElement(stdTWS, "TrnEscCod")
-                TrnFec.text = "1" if factura.tipo_gasto == "importacion" else "0"
+                TrnBenConNIT.text = nit_receptor
+                TrnBenConEspecial = etree.SubElement(stdTWS, "TrnBenConEspecial")
+                TrnBenConEspecial.text = tipo_receptor
+                TrnExp = etree.SubElement(stdTWS, "TrnExp")
+                TrnExp.text = "1" if factura.tipo_gasto == "importacion" else "0"
+                TrnExento = etree.SubElement(stdTWS, "TrnExento")
+                TrnExento.text = "0"
+                TrnFraseTipo = etree.SubElement(stdTWS, "TrnFraseTipo")
+                TrnFraseTipo.text = "0"
+                TrnEscCod = etree.SubElement(stdTWS, "TrnEscCod")
+                TrnEscCod.text = "1" if factura.tipo_gasto == "importacion" else "0"
                 TrnEFACECliCod = etree.SubElement(stdTWS, "TrnEFACECliCod")
                 TrnEFACECliNom = etree.SubElement(stdTWS, "TrnEFACECliNom")
                 TrnEFACECliNom.text = factura.partner_id.name
@@ -96,6 +112,9 @@ class AccountInvoice(models.Model):
 
                 num = 1
                 for linea in factura.invoice_line_ids:
+                    if linea.price_total == 0:
+                        continue
+
                     stdTWSDIt = etree.SubElement(stdTWSD, "stdTWS.stdTWSCIt.stdTWSDIt")
 
                     TrnLiNum = etree.SubElement(stdTWSDIt, "TrnLiNum")
