@@ -23,7 +23,7 @@ class AccountInvoice(models.Model):
                 if factura.error_pre_validacion():
                     return
                     
-                factura.descuento_lineas()
+                factura.descuento_lineas(factura.invoice_line_ids)
                 
                 tipo_documento_fel = factura.journal_id.tipo_documento_fel
                 tipo_interno_factura = factura.type if 'type' in factura.fields_get() else factura.move_type
