@@ -138,7 +138,7 @@ class AccountInvoice(models.Model):
                     TrnVUn = etree.SubElement(stdTWSDIt, "TrnVUn")
                     TrnVUn.text = str(linea.price_unit)
                     TrnUniMed = etree.SubElement(stdTWSDIt, "TrnUniMed")
-                    TrnUniMed.text = linea.product_id.product_uom_id.name if linea.product_id.product_uom_id else "UNIDAD"
+                    TrnUniMed.text = linea.uom_id.name if linea.uom_id else "UNIDAD"
                     TrnVDes = etree.SubElement(stdTWSDIt, "TrnVDes")
                     TrnVDes.text = '{:.2f}'.format( ( linea.price_unit * linea.quantity ) *  ( linea.discount / 100 ) )
                     TrnArtBienSer = etree.SubElement(stdTWSDIt, "TrnArtBienSer")
