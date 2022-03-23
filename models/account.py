@@ -70,7 +70,7 @@ class AccountMove(models.Model):
                 TrnExp = etree.SubElement(stdTWS, "TrnExp")
                 TrnExp.text = "1" if factura.tipo_gasto == "importacion" else "0"
                 TrnExento = etree.SubElement(stdTWS, "TrnExento")
-                TrnExento.text = "0"
+                TrnExento.text = "1" if factura.frase_exento_fel else "0"
                 TrnFraseTipo = etree.SubElement(stdTWS, "TrnFraseTipo")
                 TrnFraseTipo.text = "4" if factura.frase_exento_fel else "0"
                 TrnEscCod = etree.SubElement(stdTWS, "TrnEscCod")
