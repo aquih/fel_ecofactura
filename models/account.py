@@ -80,7 +80,7 @@ class AccountMove(models.Model):
                 TrnEFACECliNom = etree.SubElement(stdTWS, "TrnEFACECliNom")
                 TrnEFACECliNom.text = factura.partner_id.name
                 TrnEFACECliDir = etree.SubElement(stdTWS, "TrnEFACECliDir")
-                TrnEFACECliDir.text = factura.partner_id.street or ""
+                TrnEFACECliDir.text = (factura.partner_id.street or "")[0:140]
                 TrnObs = etree.SubElement(stdTWS, "TrnObs")
                 TrnObs.text = factura.motivo_fel or ""
                 TrnEMail = etree.SubElement(stdTWS, "TrnEmail")
