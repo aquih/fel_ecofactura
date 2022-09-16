@@ -155,10 +155,18 @@ class AccountMove(models.Model):
                         TrnArtBienSer.text = "B"
                     else:
                         TrnArtBienSer.text = "S"
+                    
+                    impuesto_adicional_cod = "0"
+                    impuesto_adicional_uni = "0"
+                    for i in linea.tax_ids:
+                        if i.tipo_impuesto_fel == "TURISMO HOSPEDAJE":
+                            impuesto_adicional_cod = "3"
+                            impuesto_adicional_uni = "1"
+                    
                     TrnArtImpAdiCod = etree.SubElement(stdTWSDIt, "TrnArtImpAdiCod")
-                    TrnArtImpAdiCod.text = "0"
+                    TrnArtImpAdiCod.text = impuesto_adicional_cod
                     TrnArtImpAdiUniGrav = etree.SubElement(stdTWSDIt, "TrnArtImpAdiUniGrav")
-                    TrnArtImpAdiUniGrav.text = "0"
+                    TrnArtImpAdiUniGrav.text = impuesto_adicional_uni
                     TrnDetCampAd01 = etree.SubElement(stdTWSDIt, "TrnDetCampAdi01")
                     TrnDetCampAd02 = etree.SubElement(stdTWSDIt, "TrnDetCampAdi02")
                     TrnDetCampAd03 = etree.SubElement(stdTWSDIt, "TrnDetCampAdi03")
