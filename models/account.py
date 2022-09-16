@@ -159,7 +159,7 @@ class AccountMove(models.Model):
                     impuesto_adicional_cod = "0"
                     impuesto_adicional_uni = "0"
                     for i in linea.tax_ids:
-                        if i.tipo_impuesto_fel == "TURISMO HOSPEDAJE":
+                        if i.tipo_impuesto_fel in ["TURISMO HOSPEDAJE", "TURISMO PASAJES"]:
                             impuesto_adicional_cod = "3"
                             impuesto_adicional_uni = "1"
                     
