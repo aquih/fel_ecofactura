@@ -70,17 +70,17 @@ class AccountMove(models.Model):
                 TrnExp = etree.SubElement(stdTWS, "TrnExp")
                 TrnExp.text = "1" if factura.tipo_gasto == "importacion" else "0"
                 TrnExento = etree.SubElement(stdTWS, "TrnExento")
-                TrnExento.text = "0"
+                TrnExento.text = "1" if factura.frase_exento_fel else "0"
                 TrnFraseTipo = etree.SubElement(stdTWS, "TrnFraseTipo")
-                TrnFraseTipo.text = "0"
+                TrnFraseTipo.text = "4" if factura.frase_exento_fel else "0"
                 TrnEscCod = etree.SubElement(stdTWS, "TrnEscCod")
-                TrnEscCod.text = "1" if factura.tipo_gasto == "importacion" else "0"
+                TrnEscCod.text = str(factura.frase_exento_fel) if factura.frase_exento_fel else ("1" if factura.tipo_gasto == "importacion" else "0")
                 TrnEFACECliCod = etree.SubElement(stdTWS, "TrnEFACECliCod")
                 TrnEFACECliCod.text = factura.partner_id.ref or "-"
                 TrnEFACECliNom = etree.SubElement(stdTWS, "TrnEFACECliNom")
                 TrnEFACECliNom.text = factura.partner_id.name
                 TrnEFACECliDir = etree.SubElement(stdTWS, "TrnEFACECliDir")
-                TrnEFACECliDir.text = factura.partner_id.street or ""
+                TrnEFACECliDir.text = (factura.partner_id.street or "")[0:140]
                 TrnObs = etree.SubElement(stdTWS, "TrnObs")
                 TrnObs.text = factura.motivo_fel or ""
                 TrnEMail = etree.SubElement(stdTWS, "TrnEmail")
