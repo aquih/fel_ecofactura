@@ -230,12 +230,11 @@ class AccountMove(models.Model):
 
                 if resultadoXML.xpath("/DTE"):
                     dte = resultadoXML.xpath("/DTE")
-                    #factura.name = dte[0].get("Serie")+"-"+dte[0].get("Numero")
                     factura.firma_fel = dte[0].get("NumeroAutorizacion")
                     factura.serie_fel = dte[0].get("Serie")
                     factura.numero_fel = dte[0].get("Numero")
                     factura.pdf_fel = resultadoXML.xpath("/DTE/Pdf")[0].text
-                    factura.documento_xml_fel = base64.b64encode(b" "+xmls)
+                    factura.documento_xml_fel = base64.b64encode(xmls)
                     factura.resultado_xml_fel = resultadoXML.xpath("/DTE/Xml")[0].text
                     factura.certificador_fel = "ecofactura"
                 else:
