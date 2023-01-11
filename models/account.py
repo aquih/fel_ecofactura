@@ -47,7 +47,7 @@ class AccountMove(models.Model):
                     nit_receptor = factura.partner_id.vat.replace('-','')
                 if factura.partner_id.nit_facturacion_fel:
                     nit_receptor = factura.partner_id.nit_facturacion_fel.replace('-','')
-                if len(nit_receptor) > 9:
+                if len(nit_receptor) > 9 and factura.tipo_gasto != 'importacion':
                     tipo_receptor = '2'
                 if tipo_documento_fel == "FESP" and factura.partner_id.cui:
                     nit_receptor = factura.partner_id.cui
