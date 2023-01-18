@@ -43,15 +43,19 @@ class AccountMove(models.Model):
                 
                 nit_receptor = 'CF'
                 tipo_receptor = '1'
+                
                 if factura.partner_id.vat:
                     nit_receptor = factura.partner_id.vat.replace('-','')
                 if factura.partner_id.nit_facturacion_fel:
                     nit_receptor = factura.partner_id.nit_facturacion_fel.replace('-','')
-                if len(nit_receptor) > 9 and factura.tipo_gasto != 'importacion':
+                    
+                if len(nit_receptor) > 9:
                     tipo_receptor = '2'
                 if tipo_documento_fel == "FESP" and factura.partner_id.cui:
                     nit_receptor = factura.partner_id.cui
                     tipo_receptor = '2'
+                if tipo_documento_fel in ["FESP", "FACT", "FCAM"] and factura.partner_id.country_id and factura.partner_id.country_id.code != 'GT':
+                    tipo_receptor = '3'
                     
                 fecha = factura.invoice_date.strftime('%Y-%m-%d') if factura.invoice_date else fields.Date.context_today(self).strftime('%Y-%m-%d')
 
