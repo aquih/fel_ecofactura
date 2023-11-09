@@ -153,11 +153,11 @@ class AccountMove(models.Model):
                     TrnCan = etree.SubElement(stdTWSDIt, "TrnCan")
                     TrnCan.text = '{:.6f}'.format(linea.quantity)
                     TrnVUn = etree.SubElement(stdTWSDIt, "TrnVUn")
-                    TrnVUn.text = '{:.6f}'.format(linea.price_unit)
+                    TrnVUn.text = '{:.6f}'.format(linea.price_total / linea.quantity)
                     TrnUniMed = etree.SubElement(stdTWSDIt, "TrnUniMed")
                     TrnUniMed.text = linea.product_uom_id.name if linea.product_uom_id else "UNIDAD"
                     TrnVDes = etree.SubElement(stdTWSDIt, "TrnVDes")
-                    TrnVDes.text = '{:.2f}'.format(( linea.price_unit * linea.quantity ) *  ( linea.discount / 100 ))
+                    TrnVDes.text = '{:.2f}'.format(linea.price_total *  ( linea.discount / 100 ))
                     TrnArtBienSer = etree.SubElement(stdTWSDIt, "TrnArtBienSer")
                     if linea.product_id.type == 'product':
                         TrnArtBienSer.text = "B"
