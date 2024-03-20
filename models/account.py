@@ -54,7 +54,7 @@ class AccountMove(models.Model):
                 if tipo_documento_fel == "FESP" and factura.partner_id.cui:
                     nit_receptor = factura.partner_id.cui
                     tipo_receptor = '2'
-                if tipo_documento_fel in ["FESP", "FACT", "FCAM"] and factura.partner_id.country_id and factura.partner_id.country_id.code != 'GT':
+                if tipo_documento_fel in ["FESP", "FACT", "FCAM", "NCRE", "NDEB", "NABN"] and factura.partner_id.country_id and factura.partner_id.country_id.code != 'GT':
                     tipo_receptor = '3'
                     
                 fecha = factura.invoice_date.strftime('%Y-%m-%d') if factura.invoice_date else fields.Date.context_today(self).strftime('%Y-%m-%d')
