@@ -216,20 +216,20 @@ class AccountMove(models.Model):
                     NomConsigODest.text = factura.consignatario_fel.name if factura.consignatario_fel else "-"
                     DirConsigODest = etree.SubElement(stdTWSCamIt, "DirConsigODest")
                     DirConsigODest.text = factura.consignatario_fel.street or "-" if factura.consignatario_fel else "-"
-                    PaisConsigODest = etree.SubElement(stdTWSCamIt, "PaisConsigODest")
-                    PaisConsigODest.text = factura.consignatario_fel.country_id.name or "-" if factura.consignatario_fel else "-"
                     # CodConsigODest = etree.SubElement(stdTWSCamIt, "CodConsigODest")
                     # CodConsigODest.text = factura.consignatario_fel.ref or "-" if factura.consignatario_fel else "-"
                     OtraRef = etree.SubElement(stdTWSCamIt, "OtraRef")
                     OtraRef.text = "-"
                     INCOTERM = etree.SubElement(stdTWSCamIt, "INCOTERM")
                     INCOTERM.text = factura.incoterm_fel or "-"
-                    LugarExpedicion = etree.SubElement(stdTWSCamIt, "LugarExpedicion")
-                    LugarExpedicion.text = factura.lugar_expedicion_fel or "-"
                     ExpNom = etree.SubElement(stdTWSCamIt, "ExpNom")
                     ExpNom.text = factura.exportador_fel.name if factura.exportador_fel else "-"
                     ExpCod = etree.SubElement(stdTWSCamIt, "ExpCod")
                     ExpCod.text = factura.exportador_fel.ref or "-" if factura.exportador_fel else "-"
+                    LugarExpedicion = etree.SubElement(stdTWSCamIt, "LugarExpedicion")
+                    LugarExpedicion.text = factura.lugar_expedicion_fel or "-"
+                    PaisConsigODest = etree.SubElement(stdTWSCamIt, "PaisConsigODest")
+                    PaisConsigODest.text = factura.consignatario_fel.country_id.name or "-" if factura.consignatario_fel else "-"
 
                 xmls = etree.tostring(stdTWS, xml_declaration=True, encoding="UTF-8")
                 logging.warn(xmls.decode('utf8'))
