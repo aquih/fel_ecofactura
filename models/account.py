@@ -18,10 +18,6 @@ class AccountMove(models.Model):
     def _post(self, soft=True):
         if self.certificar():
             return super(AccountMove, self)._post(soft)
-
-    def post(self):
-        if self.certificar():
-            return super(AccountMove, self).post()
     
     def certificar(self):
         for factura in self:
@@ -255,12 +251,8 @@ class AccountMove(models.Model):
                     factura.certificador_fel = "ecofactura"
                 else:
                     factura.error_certificador(resultado)
-                    return False
 
-                return True
-
-            else:
-                return True
+        return True
         
     def button_cancel(self):
         result = super(AccountMove, self).button_cancel()
