@@ -255,12 +255,8 @@ class AccountMove(models.Model):
                     factura.certificador_fel = "ecofactura"
                 else:
                     factura.error_certificador(resultado)
-                    return False
 
-                return True
-
-            else:
-                return True
+        return True
         
     def button_cancel(self):
         result = super(AccountMove, self).button_cancel()
