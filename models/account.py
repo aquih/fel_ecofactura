@@ -134,9 +134,7 @@ class AccountMove(models.Model):
                     if linea.price_total == 0:
                         continue
                 
-                    precio_unitario = linea.price_total / linea.quantity
-                    if tipo_documento_fel == "FESP":
-                        precio_unitario = linea.price_unit
+                    precio_unitario = linea.price_unit
 
                     stdTWSDIt = etree.SubElement(stdTWSD, "stdTWS.stdTWSCIt.stdTWSDIt")
 
