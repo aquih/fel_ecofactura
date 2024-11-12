@@ -226,7 +226,7 @@ class AccountMove(models.Model):
                     PaisConsigODest.text = factura.consignatario_fel.country_id.name or "-" if factura.consignatario_fel else "-"
 
                 xmls = etree.tostring(stdTWS, xml_declaration=True, encoding="UTF-8")
-                logging.warn(xmls.decode('utf8'))
+                logging.warning(xmls.decode('utf8'))
 
                 wsdl = "https://www.facturaenlineagt.com/adocumento?wsdl"
                 if factura.company_id.pruebas_fel:
@@ -234,7 +234,7 @@ class AccountMove(models.Model):
                 client = zeep.Client(wsdl=wsdl)
 
                 resultado = client.service.Execute(factura.company_id.vat, factura.company_id.usuario_fel, factura.company_id.clave_fel, factura.company_id.vat, xmls)
-                logging.warn(resultado)
+                logging.warning(resultado)
                 resultadoBytes = bytes(bytearray(resultado, encoding='utf-8'))
                 resultadoXML = etree.XML(resultadoBytes)
 
@@ -263,11 +263,11 @@ class AccountMove(models.Model):
                 client = zeep.Client(wsdl=wsdl)
                 
                 resultado = client.service.Execute(factura.company_id.vat, factura.company_id.usuario_fel, factura.company_id.clave_fel, factura.company_id.vat, factura.firma_fel, factura.motivo_fel)
-                logging.warn(resultado)
+                logging.warning(resultado)
                 resultadoBytes = bytes(bytearray(resultado, encoding='utf-8'))
                 resultadoXML = etree.XML(resultadoBytes)
                 factura.pdf_fel = resultadoXML.xpath("/DTE/Pdf")[0].text
-                logging.warn(resultado)
+                logging.warning(resultado)
                 
                 if not resultadoXML.xpath("/DTE"):
                     raise ValidationError(resultado)
