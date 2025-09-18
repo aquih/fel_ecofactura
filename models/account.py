@@ -234,7 +234,7 @@ class AccountMove(models.Model):
 
                 wsdl = "https://www.facturaenlineagt.com/adocumento?wsdl"
                 if factura.company_id.pruebas_fel:
-                    wsdl = "http://pruebasecofactura.com:8443/fel/adocumento?wsdl"
+                    wsdl = "https://pruebasecofactura.com:8443/fel/adocumento?wsdl"
                 client = zeep.Client(wsdl=wsdl)
 
                 resultado = client.service.Execute(factura.company_id.vat, factura.company_id.usuario_fel, factura.company_id.clave_fel, factura.company_id.vat, xmls)
@@ -263,7 +263,7 @@ class AccountMove(models.Model):
                 
                 wsdl = "https://www.facturaenlineagt.com/aanulacion?wsdl"
                 if factura.company_id.pruebas_fel:
-                    wsdl = "http://pruebasecofactura.com:8443/fel/aanulacion?wsdl"
+                    wsdl = "https://pruebasecofactura.com:8443/fel/aanulacion?wsdl"
                 client = zeep.Client(wsdl=wsdl)
                 
                 resultado = client.service.Execute(factura.company_id.vat, factura.company_id.usuario_fel, factura.company_id.clave_fel, factura.company_id.vat, factura.firma_fel, factura.motivo_fel)
