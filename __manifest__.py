@@ -2,7 +2,7 @@
 
 {
     'name': 'FEL Ecofacturas',
-    'version': '1.0',
+    'version': '1.1',
     'category': 'Custom',
     'description': """ Integración con factura electrónica de Ecofacturas """,
     'author': 'aquíH',
