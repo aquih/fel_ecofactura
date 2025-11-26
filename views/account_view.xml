@@ -15,6 +15,9 @@
                         <field name="pdf_fel_name" invisible="1"/>
                         <field name="pdf_fel" readonly="1" filename="pdf_fel_name"/>
                     </field>
+                    <field name="frase_exento_fel" position="after">
+                        <field name="escenario_exento_isr_fel" widget="url"/>
+                    </field>
                 </data>
             </field>
         </record>

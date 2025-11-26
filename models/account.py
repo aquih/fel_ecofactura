@@ -12,6 +12,7 @@ import zeep
 class AccountMove(models.Model):
     _inherit = "account.move"
 
+    escenario_exento_isr_fel = fields.Integer('Escenario Exento ISR FEL')
     pdf_fel = fields.Binary('PDF FEL', copy=False)
     pdf_fel_name = fields.Char('Nombre PDF FEL', default='pdf_fel.pdf', size=32)
 
@@ -83,8 +84,8 @@ class AccountMove(models.Model):
                 TrnFraseTipo.text = "4" if factura.frase_exento_fel else "0"
                 TrnEscCod = etree.SubElement(stdTWS, "TrnEscCod")
                 TrnEscCod.text = str(factura.frase_exento_fel) if factura.frase_exento_fel else "0"
-                # TrnEFACECliCod = etree.SubElement(stdTWS, "TrnEFACECliCod")
-                # TrnEFACECliCod.text = factura.partner_id.ref or "-"
+                ExentoISR = etree.SubElement(stdTWS, "ExentoISR")
+                ExentoISR.text = str(factura.escenario_exento_isr_fel) if factura.escenario_exento_isr_fel else "0"
                 TrnEFACECliNom = etree.SubElement(stdTWS, "TrnEFACECliNom")
                 TrnEFACECliNom.text = factura.partner_id.name
                 TrnEFACECliDir = etree.SubElement(stdTWS, "TrnEFACECliDir")
