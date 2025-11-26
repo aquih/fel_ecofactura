@@ -2,16 +2,17 @@
 
 {
     'name': 'FEL Ecofacturas',
-    'version': '1.0',
+    'version': '1.1',
     'category': 'Custom',
     'description': """ Integración con factura electrónica de Ecofacturas """,
     'author': 'aquíH',
-    'website': 'http://aquih.com/',
+    'website': 'http://www.aquih.com/',
     'depends': ['fel_gt'],
     'data': [
         'views/account_views.xml',
     ],
     'demo': [],
-    'installable': True
+    'installable': True,
+    'license': 'Other OSI approved licence',
 }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

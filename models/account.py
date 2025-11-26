@@ -12,6 +12,7 @@ import zeep
 class AccountMove(models.Model):
     _inherit = "account.move"
 
+    escenario_exento_isr_fel = fields.Integer('Escenario Exento ISR FEL')
     pdf_fel = fields.Binary('PDF FEL', copy=False)
     pdf_fel_name = fields.Char('Nombre PDF FEL', default='pdf_fel.pdf', size=32)
 
@@ -79,8 +80,8 @@ class AccountMove(models.Model):
                 TrnFraseTipo.text = "4" if factura.frase_exento_fel else "0"
                 TrnEscCod = etree.SubElement(stdTWS, "TrnEscCod")
                 TrnEscCod.text = str(factura.frase_exento_fel) if factura.frase_exento_fel else "0"
-                # TrnEFACECliCod = etree.SubElement(stdTWS, "TrnEFACECliCod")
-                # TrnEFACECliCod.text = factura.partner_id.ref or "-"
+                ExentoISR = etree.SubElement(stdTWS, "ExentoISR")
+                ExentoISR.text = str(factura.escenario_exento_isr_fel) if factura.escenario_exento_isr_fel else "0"
                 TrnEFACECliNom = etree.SubElement(stdTWS, "TrnEFACECliNom")
                 TrnEFACECliNom.text = factura.partner_id.name
                 TrnEFACECliDir = etree.SubElement(stdTWS, "TrnEFACECliDir")
@@ -165,8 +166,14 @@ class AccountMove(models.Model):
                     impuesto_adicional_cod = "0"
                     impuesto_adicional_uni = "0"
                     for i in linea.tax_ids:
-                        if i.tipo_impuesto_fel in ["TURISMO HOSPEDAJE", "TURISMO PASAJES"]:
+                        if i.tipo_impuesto_fel in ["TURISMO HOSPEDAJE"]:
                             impuesto_adicional_cod = "3"
+                            impuesto_adicional_uni = "1"
+                        if i.tipo_impuesto_fel in ["TURISMO PASAJES"]:
+                            impuesto_adicional_cod = "4"
+                            impuesto_adicional_uni = "1"
+                        if i.tipo_impuesto_fel in ["TIMBRE DE PRENSA"]:
+                            impuesto_adicional_cod = "5"
                             impuesto_adicional_uni = "1"
                     
                     TrnArtImpAdiCod = etree.SubElement(stdTWSDIt, "TrnArtImpAdiCod")
@@ -210,8 +217,6 @@ class AccountMove(models.Model):
                     NomConsigODest.text = factura.consignatario_fel.name if factura.consignatario_fel else "-"
                     DirConsigODest = etree.SubElement(stdTWSCamIt, "DirConsigODest")
                     DirConsigODest.text = factura.consignatario_fel.street or "-" if factura.consignatario_fel else "-"
-                    # CodConsigODest = etree.SubElement(stdTWSCamIt, "CodConsigODest")
-                    # CodConsigODest.text = factura.consignatario_fel.ref or "-" if factura.consignatario_fel else "-"
                     OtraRef = etree.SubElement(stdTWSCamIt, "OtraRef")
                     OtraRef.text = "-"
                     INCOTERM = etree.SubElement(stdTWSCamIt, "INCOTERM")
